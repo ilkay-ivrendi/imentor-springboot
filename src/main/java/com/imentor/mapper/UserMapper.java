@@ -15,6 +15,7 @@ public class UserMapper {
                 .lastName(user.getLastName())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .password(null) // for security we set it to null at response
                 .age(user.getAge())
                 .dateOfBirth(user.getDateOfBirth())
                 .avatarUrl(user.getAvatarUrl())
@@ -35,6 +36,7 @@ public class UserMapper {
                 .lastName(userDTO.getLastName())
                 .fullName(userDTO.getFullName())
                 .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
                 .age(userDTO.getAge())
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .avatarUrl(userDTO.getAvatarUrl())

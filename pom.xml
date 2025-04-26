@@ -52,6 +52,11 @@
     		<version>1.18.30</version> <!-- (this is the latest stable now, you can check if newer is available) -->
     		<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 		
 	</dependencies>
 
