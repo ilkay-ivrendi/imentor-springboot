@@ -1,49 +1,54 @@
 package com.imentor.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.imentor.dto.UserDTO;
 import com.imentor.model.User;
 import com.imentor.repository.UserRepository;
+import com.imentor.security.JwtService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     // Register a new user
     @Transactional
-    public String registerUser(UserDTO userDTO) {
+    public String registerUser(UserDTO request) {
         // Check if user already exists
-        if (userRepository.existsByUsername(userDTO.getUsername())) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username is already taken!");
         }
 
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email is already in use!");
         }
 
         // Create a new User entity
         User user = User.builder()
-                .username(userDTO.getUsername())
-                .firstName(userDTO.getFirstName())
-                .lastName(userDTO.getLastName())
-                .email(userDTO.getEmail())
-                .password(passwordEncoder.encode(userDTO.getPassword())) // Encrypt password
-                .userRole(userDTO.getUserRole())
+                .username(request.getUsername())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword())) // Encrypt password
+                .userRole(request.getUserRole())
                 .active(false)
                 .build();
+
+        user.prepareForSave();
 
         // Save user to the database
         userRepository.save(user);
 
-        return "User registered successfully!";
+        return jwtService.generateToken(user.getUsername());
     }
 
     // Login: Authenticate the user and return JWT
@@ -59,6 +64,6 @@ public class AuthService {
 
         // Generate JWT Token
         // return jwtUtils.generateToken(user.getUsername());
-        return "jwt_token";
+        return jwtService.generateToken(user.getUsername());
     }
 }
