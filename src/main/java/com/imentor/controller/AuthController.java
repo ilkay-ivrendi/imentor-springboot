@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.imentor.dto.UserDTO;
+import com.imentor.dto.LoginRequestDTO;
+import com.imentor.dto.RegisterRequestDTO;
 import com.imentor.service.AuthService;
 
 @RestController
@@ -19,9 +20,9 @@ public class AuthController {
 
     // Register endpoint
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequestDTO registerRequest) {
         try {
-            String response = authService.registerUser(userDTO);
+            String response = authService.registerUser(registerRequest);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -30,9 +31,9 @@ public class AuthController {
 
     // Login endpoint (authentication)
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO loginRequest) {
         try {
-            String jwt = authService.authenticateUser(userDTO);
+            String jwt = authService.authenticateUser(loginRequest);
             return ResponseEntity.ok(jwt);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
