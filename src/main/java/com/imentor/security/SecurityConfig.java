@@ -18,11 +18,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .authorizeRequests()
-            .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()  // Allow login and register without JWT
-            .anyRequest().authenticated()  // Protect all other routes
-            .and()
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Add your JWT filter before UsernamePasswordAuthenticationFilter
+                .authorizeRequests()
+                .requestMatchers("/api/v1/auth/register",
+                        "/api/v1/auth/login",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**", // <-- allow swagger resources
+                        "/v3/api-docs/**")
+                .permitAll() // Allow login and register without JWT
+                .anyRequest().authenticated() // Protect all other routes
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Add your JWT filter before
+                                                                                         // UsernamePasswordAuthenticationFilter
         return http.build();
     }
 
