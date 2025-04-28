@@ -3,7 +3,9 @@ package com.imentor.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class RegisterRequestDTO {
     @NotBlank(message = "Username is required")
     @Size(min = 3, message = "Username must have at least 3 characters")

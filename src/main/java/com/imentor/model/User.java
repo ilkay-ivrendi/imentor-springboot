@@ -6,7 +6,6 @@ import java.time.Period;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.imentor.common.enums.UserRole;
 
 import lombok.AllArgsConstructor;
@@ -40,7 +39,7 @@ public class User {
     private UserRole userRole;
 
     private boolean active = false;
-    private LocalDate createdAt = LocalDate.now();
+    private LocalDate createdAt;
 
     public void prepareForSave() {
         // Auto set fullName
