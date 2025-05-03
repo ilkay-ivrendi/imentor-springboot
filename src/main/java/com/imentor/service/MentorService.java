@@ -41,7 +41,6 @@ public class MentorService {
         MentorDTO dto = new MentorDTO();
         dto.setName(mentor.getName());
         dto.setBranch(mentor.getBranch());
-        dto.setMentorAvatar(mentor.getMentorAvatar());
         dto.setDescription(mentor.getDescription());
         dto.setSystemPrompt(mentor.getSystemPrompt());
         dto.setLessons(mentor.getLessons());
@@ -53,6 +52,8 @@ public class MentorService {
 
         // Construct the path assuming files are in: /audio/mentor-intros/
         String voiceUrl = "http://localhost:8080/audio/mentor-intros/" + fileName + ".wav";
+        String mentorAvatar = "http://localhost:8080/images/mentor-avatars/" + fileName + ".png";
+        dto.setMentorAvatar(mentorAvatar);
         dto.setVoiceIntroUrl(voiceUrl);
         return dto;
     }
