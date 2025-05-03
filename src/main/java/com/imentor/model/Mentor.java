@@ -26,4 +26,6 @@ public class Mentor {
     private String systemPrompt;     
     private List<String> lessons; 
     private String mentorAvatar;
+    private String voiceIntroUrl;
+    private String voiceId;
 }

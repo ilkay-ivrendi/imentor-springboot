@@ -25,6 +25,7 @@ public class MentorService {
                 .systemPrompt(mentorDTO.getSystemPrompt())
                 .mentorAvatar(mentorDTO.getMentorAvatar())
                 .lessons(mentorDTO.getLessons())
+                .voiceId(mentorDTO.getVoiceId())
                 .build();
         return mentorRepository.save(mentor);
     }
@@ -44,6 +45,15 @@ public class MentorService {
         dto.setDescription(mentor.getDescription());
         dto.setSystemPrompt(mentor.getSystemPrompt());
         dto.setLessons(mentor.getLessons());
+        dto.setVoiceId("p225");
+        
+        String fileName = mentor.getName()
+        .replace(" ", "_")                 
+        .replaceAll("[^a-zA-Z0-9._]", "");
+
+        // Construct the path assuming files are in: /audio/mentor-intros/
+        String voiceUrl = "http://localhost:8080/audio/mentor-intros/" + fileName + ".wav";
+        dto.setVoiceIntroUrl(voiceUrl);
         return dto;
     }
 }

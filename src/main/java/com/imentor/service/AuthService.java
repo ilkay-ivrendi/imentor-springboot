@@ -1,7 +1,10 @@
 package com.imentor.service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,16 +67,36 @@ public class AuthService {
 
     }
 
-    public String authenticateUser(LoginRequestDTO loginRequest) {
-        log.info("Authenticating user: {}", loginRequest.getUsername());
+    public AuthResponseDTO authenticateUser(LoginRequestDTO loginRequest) {
+        log.info("Authenticating user: {}", loginRequest.getIdentifier());
 
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+        String identifier = loginRequest.getIdentifier();
+        String password = loginRequest.getPassword();
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+        Optional<User> optionalUser = userRepository.findByUsername(identifier);
+
+        if (optionalUser.isEmpty()) {
+            optionalUser = userRepository.findByEmail(identifier);
         }
 
-        return jwtService.generateToken(user.getUsername());
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with identifier: " + identifier);
+        }
+
+        User user = optionalUser.get();
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        String token = jwtService.generateToken(user.getUsername());
+
+        AuthResponseDTO authResponse = new AuthResponseDTO();
+        authResponse.setUsername(user.getUsername());
+        authResponse.setEmail(user.getEmail());
+        authResponse.setUserRole(UserRole.USER);
+        authResponse.setToken(token);
+
+        return authResponse;
     }
 }

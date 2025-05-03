@@ -32,10 +32,10 @@ public class AuthController {
 
     // Login endpoint (authentication)
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequestDTO loginRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequestDTO loginRequest) {
         try {
-            String jwt = authService.authenticateUser(loginRequest);
-            return ResponseEntity.ok(jwt);
+            AuthResponseDTO response = authService.authenticateUser(loginRequest);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
