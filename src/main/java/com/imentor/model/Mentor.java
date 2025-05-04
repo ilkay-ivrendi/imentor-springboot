@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Mentor {
     
     @Id
-    private String id;
+    private String mentorId;
 
     private String name;
     private String branch;             

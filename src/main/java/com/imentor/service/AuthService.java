@@ -92,6 +92,7 @@ public class AuthService {
         String token = jwtService.generateToken(user.getUsername());
 
         AuthResponseDTO authResponse = new AuthResponseDTO();
+        authResponse.setUserId(user.getId());
         authResponse.setUsername(user.getUsername());
         authResponse.setEmail(user.getEmail());
         authResponse.setUserRole(UserRole.USER);

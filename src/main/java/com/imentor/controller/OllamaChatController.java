@@ -3,6 +3,7 @@ package com.imentor.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,48 +13,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.imentor.dto.ChatRequestDTO;
+import com.imentor.model.Mentor;
+import com.imentor.repository.MentorRepository;
 import com.imentor.service.OllamaChatService;
 
 @RestController
-@RequestMapping("/api/v1/chat")
+@RequestMapping("/api/v1/ollamachat")
 public class OllamaChatController {
 
     @Autowired
     private OllamaChatService ollamaChatService;
 
+    @Autowired
+    private MentorRepository mentorRepository;
+
     // History Teacher Chat Endpoint
-    @PostMapping("/history-teacher")
-    public ResponseEntity<String> chatWithHistoryTeacher(@RequestBody ChatRequestDTO chatRequest) {
-        List<Map<String, String>> messages = new ArrayList<>();
+    @PostMapping
+    public ResponseEntity<?> chatWithMentor(@RequestBody ChatRequestDTO chatRequest) {
+        String mentorId = chatRequest.getMentorId();
+        Optional<Mentor> optionalMentor = mentorRepository.findById(mentorId);
 
-        // System prompt (persona)
+        if (optionalMentor.isEmpty()) {
+            return ResponseEntity.status(404).body("Mentor not found.");
+        }
+
+        Mentor mentor = optionalMentor.get();
+
+        List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of(
                 "role", "system",
-                "content",
-                "You are a wise and patient history teacher. Always explain historical facts clearly and suggest history topics for the student's age."));
-
-        // User message
+                "content", mentor.getSystemPrompt()
+        ));
         messages.add(Map.of(
                 "role", "user",
-                "content", chatRequest.getMessage()));
-
-        String response = ollamaChatService.chatWithOllama("llama3.2", messages, chatRequest.isStream());
-        return ResponseEntity.ok(response);
-    }
-
-    // Music Teacher Chat Endpoint
-    @PostMapping("/music-teacher")
-    public ResponseEntity<String> chatWithMusicTeacher(@RequestBody ChatRequestDTO chatRequest) {
-        List<Map<String, String>> messages = new ArrayList<>();
-
-        messages.add(Map.of(
-                "role", "system",
-                "content",
-                "You are a cheerful music teacher who explains musical concepts in a fun way. Suggest songs and instruments depending on the user's age."));
-
-        messages.add(Map.of(
-                "role", "user",
-                "content", chatRequest.getMessage()));
+                "content", chatRequest.getMessage()
+        ));
 
         String response = ollamaChatService.chatWithOllama("llama3.2", messages, chatRequest.isStream());
         return ResponseEntity.ok(response);

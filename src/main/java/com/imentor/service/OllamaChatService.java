@@ -26,7 +26,7 @@ public class OllamaChatService {
 
     public String chatWithOllama(String persona, List<Map<String, String>> messages, boolean stream) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("model", persona); // like "llama3"
+        payload.put("model", persona); 
         payload.put("messages", messages);
         payload.put("stream", stream);
 
